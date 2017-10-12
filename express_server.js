@@ -2,16 +2,36 @@ const app = require('express')();
 const PORT = process.env.PORT || 8080;
 const bodyParser = require("body-parser");
 app.use(bodyParser.urlencoded({extended: true}));
+const cookieParser = require("cookie-parser");
+app.use(cookieParser())
 
 app.set('view engine', 'ejs');
+
 
 var urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
   "9sm5xK": "http://www.google.com"
 };
 
+app.use((req, res, next) => {
+  const { username } = req.cookies;
+  res.locals.username = username;
+  next();
+});
+
 app.get("/", (req, res) => {
-  res.end("Hello!");
+  res.redirect('/urls')
+});
+
+app.post("/login", (req, res) => {
+  res.cookie('username', req.body.username)
+  res.redirect('/urls');
+});
+
+app.post("/logout", (req, res) => {
+  res.clearCookie('username');
+  //res.locals.username = undefined;
+  res.redirect('/urls');
 });
 
 app.get("/urls", (req, res) => {

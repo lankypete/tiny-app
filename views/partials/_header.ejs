@@ -4,3 +4,16 @@
   <title>TinyApp</title>
 </head>
 <body>
+
+ <% if(!username) {%>
+  <form autocomplete="off" action="/login" method="POST">
+    <input type="text" name="username">
+    <input type="submit" name="submit">
+  </form>
+ <%} else {%>
+  <form method="POST" action="/logout">
+    <button value="submit">SiGnOuT</button>
+  </form>
+ <%}%>
+
+

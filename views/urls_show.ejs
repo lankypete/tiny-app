@@ -1,0 +1,16 @@
+<% include ./partials/_header %>
+
+
+  <div><a href="/u/<%=shortURL%>"><%=shortURL%></a></div>
+
+  <div>
+    <form action="/urls/<%=shortURL%>" autocomplete="off" method="post">
+      <input type="text" name="newName">
+      <button type="submit">Rename!</button>
+    </form>
+  </div>
+
+  <div><a href="/urls">URL List</a></div>
+
+</body>
+</html>

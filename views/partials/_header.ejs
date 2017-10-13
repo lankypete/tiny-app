@@ -1,19 +1,36 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <title>TinyApp</title>
+  <title>Tomato.App</title>
 </head>
+<style type="text/css">
+  body {
+    border: 1px solid <%=randomColor%>;
+    border-radius: 3px;
+    padding: 2em;
+    position: absolute;
+    top: 10%;
+    left: 50%;
+    transform: translatex(-50%);
+  }
+  footer {
+    text-align: center;
+    margin-top: 2em;
+  }
+  a {
+    text-decoration: none;
+    color: tomato;
+  }
+  a:hover {
+    color: red;
+  }
+  div {
+    margin-top: .5rem;
+  }
+</style>
 <body>
+  <h1><a href="/">Tomato.App</a></h1>
 
- <% if(!username) {%>
-  <form autocomplete="off" action="/login" method="POST">
-    <input type="text" name="username">
-    <input type="submit" name="submit">
-  </form>
- <%} else {%>
-  <form method="POST" action="/logout">
-    <button value="submit">SiGnOuT</button>
-  </form>
- <%}%>
+
 
 

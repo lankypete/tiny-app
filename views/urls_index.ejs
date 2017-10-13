@@ -1,4 +1,7 @@
 <% include ./partials/_header %>
+<% include partials/_userActions %>
+
+    <h2>Saved URLs</h2>
 
     <ul>
       <% for( url in urls ) {%>
@@ -13,6 +16,4 @@
 
     <div><a href="/urls/new">Add New URL</a></div>
 
-
-</body>
-</html>
+<% include partials/_footer %>

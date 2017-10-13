@@ -1,0 +1,25 @@
+<% include partials/_header %>
+
+<h2>Register</h2>
+
+<form method="POST" action="/register">
+  <div class="container">
+    <label><b>Email</b></label>
+    <input type="email" placeholder="Enter Email" name="email">
+
+    <label><b>Password</b></label>
+    <input type="password" placeholder="Enter Password" name="password">
+
+    <button type="submit" class="signupbtn">Register</button>
+  </div>
+</form>
+<% if(locals.error) {%>
+  <div style="color:tomato">
+    <%= error %>
+  </div>
+<% } %>
+<div>
+  Already have an account? <a href="/login">Login</a>
+</div>
+
+<% include partials/_footer %>

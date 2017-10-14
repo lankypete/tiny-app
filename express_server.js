@@ -9,8 +9,10 @@ app.set('view engine', 'ejs');
 
 
 var urlDatabase = {
-  "b2xVn2": "http://www.lighthouselabs.ca",
-  "9sm5xK": "http://www.google.com"
+  "b2xVn2": { url: "http://www.lighthouselabs.ca", userId: "666" },
+  "9sm5xK": { url: "http://www.google.com", userId: "678" },
+  "S160d3": { url: "http://www.worldsbiggestwindow.com", userId: "666" },
+  "S960g3": { url: "http://www.worldscleanestwindow.com", userId: "678" }
 };
 
 
@@ -21,9 +23,9 @@ const users = {
     password: "asdf"
   },
  "user2RandomID": {
-    id: "user2RandomID",
-    email: "user2@example.com",
-    password: "dishwasher-funk"
+    id: "678",
+    email: "b@b.com",
+    password: "asdf"
   }
 }
 
@@ -64,6 +66,45 @@ function loginUser(email, password) {
   }
 }
 
+function authorizeSession(error) {
+  return (req, res, next) => {
+    res.locals.user = getUserById(req.cookies.userId);
+    if(res.locals.user) {
+      next();
+    } else if (!error) {
+      res.redirect('/login');
+    } else {
+      res.redirect('/login?error=' + error);
+    }
+  }
+}
+
+function createURL(url, userId) {
+  const URLKey = generateRandomString();
+  const protocol = url.slice(0, 7);
+  if( protocol !== ('https://' || 'http://') ) {
+    url = "https://" + url;
+  }
+  urlDatabase[URLKey] = {
+    url,
+    userId
+  }
+  return URLKey;
+}
+
+function editURL(id, url, currentUserId) {
+  if( urlDatabase[id].userId === currentUserId ) {
+    const protocol = url.slice(0, 7);
+    if( protocol !== ('https://' || 'http://') ) {
+      url = "https://" + url;
+    }
+    urlDatabase[id].url = url;
+    return true;
+  } else {
+    return false;
+  }
+
+}
 
 
 //----------------------------------------
@@ -102,10 +143,13 @@ app.get("/", (req, res) => {
   res.redirect('/urls')
 });
 
+
 //----------- Log In/Out --------------
 
+
 app.get("/login", (req, res) => {
-  res.render('login');
+  const error = req.query.error;
+  res.render('login', { error });
 });
 
 app.post("/login", (req, res) => {
@@ -127,7 +171,6 @@ app.post("/logout", (req, res) => {
 //------------- Register --------------
 
 app.get('/register', (req, res) => {
-
   res.render('register');
 });
 
@@ -147,24 +190,60 @@ app.post('/register', (req, res) => {
 
 
 app.get("/urls", (req, res) => {
-  let templateVars = { urls : urlDatabase }
+  const userId = req.cookies.userId;
+  const userURLS = {};
+  const allURLs = {};
+  Object.keys(urlDatabase).forEach(function(url) {
+    if( userId && ( urlDatabase[url].userId === userId ) ) {
+      userURLS[url] = urlDatabase[url];
+    }
+    if( !userId ) {
+      userURLS[url] = urlDatabase[url];
+    }
+
+    allURLs[url] = urlDatabase[url];
+
+  });
+
+  let templateVars = {
+    urls : userURLS,
+    userId,
+    allURLs,
+  }
   res.render("urls_index", templateVars)
 });
 
-app.get("/urls/new", (req, res) => {
+app.post("/urls", (req, res) => {
+  const URLKey = createURL(req.body.longURL, req.cookies.userId);
+  res.redirect( "/urls/" + URLKey );
+});
+
+app.get("/urls/new", authorizeSession('You must log into an account to set URLs'), (req, res) => {
   res.render("urls_new");
 });
 
 app.get("/urls/:id", (req, res) => {
-  let templateVars = { shortURL: req.params.id };
-  res.render("urls_show", templateVars);
+  const error = req.query.error;
+  let templateVars = {
+    shortURL: req.params.id,
+    url: urlDatabase[req.params.id],
+    error
+  };
+  res.render("urls_show", templateVars );
 });
 
 app.post("/urls/:id", (req, res) => {
   const id = req.params.id;
   const newName = req.body.newName;
-  urlDatabase[id] = newName;
-  res.redirect('/urls');
+  const currentUserId = req.cookies.userId;
+  const URLEdit = editURL(id, newName, currentUserId);
+  if( URLEdit ) {
+    res.redirect('/urls');
+  } else {
+    const error = "This is not your URL to edit";
+    res.redirect('/urls/' + id + '?error=' + error)
+  }
+
 });
 
 app.post("/urls/:id/delete", (req, res) => {
@@ -173,20 +252,12 @@ app.post("/urls/:id/delete", (req, res) => {
   res.redirect("/urls");
 });
 
-app.post("/urls", (req, res) => {
-  console.log(req.body);  // debug statement to see POST parameters
-  const URLKey = generateRandomString();
-  urlDatabase[URLKey] = req.body.longURL;
-  console.log(urlDatabase);
-  res.redirect("/urls");         // Respond with 'Ok' (we will replace this)
-});
 
 app.get("/u/:shortURL", (req, res) => {
   const url = req.url;
   const urlKey = url.substr(url.length-6, url.length-1);
-  let longURL = urlDatabase[urlKey];
+  let longURL = urlDatabase[urlKey].url;
   res.redirect(longURL);
-
 });
 
 

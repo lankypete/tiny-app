@@ -1,15 +1,22 @@
 <% include ./partials/_header %>
 
+  <% if(error) { %>
+  <h3 style="text-decoration: underline; color: blue;"><%= error %></h3>
+  <% } %>
 
-  <div><a href="/u/<%=shortURL%>"><%=shortURL%></a></div>
+  <h3>Long URL</h3>
+  <div><%=url.url%></div>
 
   <div>
     <form action="/urls/<%=shortURL%>" autocomplete="off" method="post">
-      <input type="text" name="newName">
-      <button type="submit">Rename!</button>
+      <input type="text" name="newName" placeholder="EDIT: <%=url.url%>">
+      <button type="submit">Edit</button>
     </form>
   </div>
 
-  <div><a href="/urls">URL List</a></div>
+  <h3>Short URL</h3>
+  <div><a target="blank" href="/u/<%=shortURL%>"><%=shortURL%></a></div>
+
+  <div><a href="/urls">All URLs</a></div>
 
 <% include partials/_footer %>

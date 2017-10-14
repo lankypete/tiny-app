@@ -12,6 +12,11 @@
     <button type="submit" value="submit">Log In</button>
   </div>
 </form>
+<% if(locals.error) {%>
+  <div style="color:tomato">
+    <%= error %>
+  </div>
+<% } %>
 <div>
   Or register new user <a href="/register">here</a>
 </div>

@@ -1,19 +1,32 @@
 <% include ./partials/_header %>
 <% include partials/_userActions %>
 
-    <h2>Saved URLs</h2>
+    <h2><%if( !userId ) { %>All Saved URLs<% } else { %>Your Saved URLs<% } %></h2>
 
     <ul>
       <% for( url in urls ) {%>
       <li>
-        <a href="/urls/<%=url%>"><%= urls[url] %></a>
-        <form method="POST" action="/urls/<%= url %>/delete">
-          <button name="delete-url" value="submit">Delete</button>
-        </form>
+        <a href="/urls/<%=url%>"><%= urls[url].url %></a>
+        <%if( userId ) { %>
+          <form method="POST" action="/urls/<%= url %>/delete">
+            <button name="delete-url" value="submit">Delete</button>
+          </form>
+        <% }%>
+
       </li>
       <% }%>
     </ul>
 
     <div><a href="/urls/new">Add New URL</a></div>
+
+    <% if(allURLs && userId) {%> <h2>All User URLs</h2>
+    <ul>
+      <% for( url in allURLs ) {%>
+      <li>
+        <a href="/urls/<%= url %>"><%= allURLs[url].url %></a>
+      </li>
+      <% } %>
+    </ul>
+    <% } %>
 
 <% include partials/_footer %>

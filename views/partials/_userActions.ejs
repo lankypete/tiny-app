@@ -2,8 +2,8 @@
   <% if( !locals.user ) { %>
   <form method="POST" action="/login">
     <div>Login</div>
-    <input type="email" name="email" placeholder="email">
-    <input type="password" name="password" placeholder="password">
+    <input type="email" name="email" placeholder="email" autocomplete="off">
+    <input type="password" name="password" placeholder="password" autocomplete="off">
     <button type="submit">Login</button>
   </form>
   <div>

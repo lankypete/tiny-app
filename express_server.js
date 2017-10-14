@@ -64,8 +64,6 @@ function createUser(email, password) {
     password
   };
 
-  console.log(users);
-
   return id;
 }
 
